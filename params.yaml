@@ -1,0 +1,30 @@
+# Parameters for the cell-tracking simulation experiments.
+# Everything needed to reproduce the generated data lives here.
+
+seed: 20260708          # master seed; per-replicate seeds are spawned from this
+n_replicates: 10
+
+# Branching process (continuous-time pure-birth / Yule)
+n_founders: 100         # N cells at t=0
+lambda_div: 0.6931471805599453   # division rate = ln(2)  => one doubling per unit time
+                                  # expected population at t=T is n_founders * exp(lambda*T)
+
+# Spatial model (independent 2D Brownian motion per cell)
+sigma: 0.5              # BM volatility; per-unit-time displacement std = sigma * sqrt(dt) per axis
+founder_box: 20.0       # founders placed uniformly in [0, founder_box]^2 at t=0
+
+# Time horizon of the master process
+horizon_T: 2.0
+
+# Observation model
+obs_noise_sigma: 0.0    # measurement noise on (x, y); 0.0 => observed == true positions (v1)
+
+# The two experiments sample the SAME master trajectories at different snapshot times.
+experiments:
+  exp1:
+    snapshot_times: [0.0, 1.0, 2.0]
+  exp2:
+    snapshot_times: [0.0, 0.5, 1.0, 1.5, 2.0]
+
+# Which ancestry relation matrices to emit: all forward pairs (i < j) within each experiment.
+relation_pairs: all_forward

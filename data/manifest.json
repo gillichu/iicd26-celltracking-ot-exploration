@@ -1,0 +1,451 @@
+{
+  "params": {
+    "seed": 20260708,
+    "n_replicates": 10,
+    "n_founders": 100,
+    "lambda_div": 0.6931471805599453,
+    "sigma": 0.5,
+    "founder_box": 20.0,
+    "horizon_T": 2.0,
+    "obs_noise_sigma": 0.0,
+    "experiments": {
+      "exp1": {
+        "snapshot_times": [
+          0.0,
+          1.0,
+          2.0
+        ]
+      },
+      "exp2": {
+        "snapshot_times": [
+          0.0,
+          0.5,
+          1.0,
+          1.5,
+          2.0
+        ]
+      }
+    },
+    "relation_pairs": "all_forward"
+  },
+  "master_seed": 20260708,
+  "replicate_seeds": [
+    {
+      "entropy": 20260708,
+      "spawn_key": [
+        0
+      ]
+    },
+    {
+      "entropy": 20260708,
+      "spawn_key": [
+        1
+      ]
+    },
+    {
+      "entropy": 20260708,
+      "spawn_key": [
+        2
+      ]
+    },
+    {
+      "entropy": 20260708,
+      "spawn_key": [
+        3
+      ]
+    },
+    {
+      "entropy": 20260708,
+      "spawn_key": [
+        4
+      ]
+    },
+    {
+      "entropy": 20260708,
+      "spawn_key": [
+        5
+      ]
+    },
+    {
+      "entropy": 20260708,
+      "spawn_key": [
+        6
+      ]
+    },
+    {
+      "entropy": 20260708,
+      "spawn_key": [
+        7
+      ]
+    },
+    {
+      "entropy": 20260708,
+      "spawn_key": [
+        8
+      ]
+    },
+    {
+      "entropy": 20260708,
+      "spawn_key": [
+        9
+      ]
+    }
+  ],
+  "union_snapshot_times": [
+    0.0,
+    0.5,
+    1.0,
+    1.5,
+    2.0
+  ],
+  "versions": {
+    "python": "3.13.11",
+    "numpy": "2.3.5",
+    "pyyaml": "6.0.3"
+  },
+  "git_commit": null,
+  "summary": {
+    "replicates": [
+      {
+        "replicate": 0,
+        "n_cells_total": 666,
+        "experiments": {
+          "exp1": {
+            "snapshot_times": [
+              0.0,
+              1.0,
+              2.0
+            ],
+            "counts": [
+              100,
+              185,
+              383
+            ]
+          },
+          "exp2": {
+            "snapshot_times": [
+              0.0,
+              0.5,
+              1.0,
+              1.5,
+              2.0
+            ],
+            "counts": [
+              100,
+              132,
+              185,
+              271,
+              383
+            ]
+          }
+        }
+      },
+      {
+        "replicate": 1,
+        "n_cells_total": 712,
+        "experiments": {
+          "exp1": {
+            "snapshot_times": [
+              0.0,
+              1.0,
+              2.0
+            ],
+            "counts": [
+              100,
+              206,
+              406
+            ]
+          },
+          "exp2": {
+            "snapshot_times": [
+              0.0,
+              0.5,
+              1.0,
+              1.5,
+              2.0
+            ],
+            "counts": [
+              100,
+              140,
+              206,
+              296,
+              406
+            ]
+          }
+        }
+      },
+      {
+        "replicate": 2,
+        "n_cells_total": 654,
+        "experiments": {
+          "exp1": {
+            "snapshot_times": [
+              0.0,
+              1.0,
+              2.0
+            ],
+            "counts": [
+              100,
+              188,
+              377
+            ]
+          },
+          "exp2": {
+            "snapshot_times": [
+              0.0,
+              0.5,
+              1.0,
+              1.5,
+              2.0
+            ],
+            "counts": [
+              100,
+              138,
+              188,
+              265,
+              377
+            ]
+          }
+        }
+      },
+      {
+        "replicate": 3,
+        "n_cells_total": 778,
+        "experiments": {
+          "exp1": {
+            "snapshot_times": [
+              0.0,
+              1.0,
+              2.0
+            ],
+            "counts": [
+              100,
+              218,
+              439
+            ]
+          },
+          "exp2": {
+            "snapshot_times": [
+              0.0,
+              0.5,
+              1.0,
+              1.5,
+              2.0
+            ],
+            "counts": [
+              100,
+              156,
+              218,
+              322,
+              439
+            ]
+          }
+        }
+      },
+      {
+        "replicate": 4,
+        "n_cells_total": 664,
+        "experiments": {
+          "exp1": {
+            "snapshot_times": [
+              0.0,
+              1.0,
+              2.0
+            ],
+            "counts": [
+              100,
+              182,
+              382
+            ]
+          },
+          "exp2": {
+            "snapshot_times": [
+              0.0,
+              0.5,
+              1.0,
+              1.5,
+              2.0
+            ],
+            "counts": [
+              100,
+              135,
+              182,
+              256,
+              382
+            ]
+          }
+        }
+      },
+      {
+        "replicate": 5,
+        "n_cells_total": 744,
+        "experiments": {
+          "exp1": {
+            "snapshot_times": [
+              0.0,
+              1.0,
+              2.0
+            ],
+            "counts": [
+              100,
+              193,
+              422
+            ]
+          },
+          "exp2": {
+            "snapshot_times": [
+              0.0,
+              0.5,
+              1.0,
+              1.5,
+              2.0
+            ],
+            "counts": [
+              100,
+              135,
+              193,
+              283,
+              422
+            ]
+          }
+        }
+      },
+      {
+        "replicate": 6,
+        "n_cells_total": 718,
+        "experiments": {
+          "exp1": {
+            "snapshot_times": [
+              0.0,
+              1.0,
+              2.0
+            ],
+            "counts": [
+              100,
+              213,
+              409
+            ]
+          },
+          "exp2": {
+            "snapshot_times": [
+              0.0,
+              0.5,
+              1.0,
+              1.5,
+              2.0
+            ],
+            "counts": [
+              100,
+              146,
+              213,
+              288,
+              409
+            ]
+          }
+        }
+      },
+      {
+        "replicate": 7,
+        "n_cells_total": 642,
+        "experiments": {
+          "exp1": {
+            "snapshot_times": [
+              0.0,
+              1.0,
+              2.0
+            ],
+            "counts": [
+              100,
+              193,
+              371
+            ]
+          },
+          "exp2": {
+            "snapshot_times": [
+              0.0,
+              0.5,
+              1.0,
+              1.5,
+              2.0
+            ],
+            "counts": [
+              100,
+              137,
+              193,
+              265,
+              371
+            ]
+          }
+        }
+      },
+      {
+        "replicate": 8,
+        "n_cells_total": 736,
+        "experiments": {
+          "exp1": {
+            "snapshot_times": [
+              0.0,
+              1.0,
+              2.0
+            ],
+            "counts": [
+              100,
+              198,
+              418
+            ]
+          },
+          "exp2": {
+            "snapshot_times": [
+              0.0,
+              0.5,
+              1.0,
+              1.5,
+              2.0
+            ],
+            "counts": [
+              100,
+              143,
+              198,
+              282,
+              418
+            ]
+          }
+        }
+      },
+      {
+        "replicate": 9,
+        "n_cells_total": 610,
+        "experiments": {
+          "exp1": {
+            "snapshot_times": [
+              0.0,
+              1.0,
+              2.0
+            ],
+            "counts": [
+              100,
+              189,
+              355
+            ]
+          },
+          "exp2": {
+            "snapshot_times": [
+              0.0,
+              0.5,
+              1.0,
+              1.5,
+              2.0
+            ],
+            "counts": [
+              100,
+              147,
+              189,
+              263,
+              355
+            ]
+          }
+        }
+      }
+    ]
+  }
+}

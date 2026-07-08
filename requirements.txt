@@ -1,0 +1,4 @@
+numpy>=2.0
+pyyaml>=6.0
+# pandas is only needed to run the validation snippet in the README, not to generate data.
+pandas>=2.0
