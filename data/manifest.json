@@ -7,6 +7,7 @@
     "sigma": 0.5,
     "founder_box": 20.0,
     "horizon_T": 2.0,
+    "sim_grid_dt": 0.01,
     "obs_noise_sigma": 0.0,
     "experiments": {
       "exp1": {
@@ -103,7 +104,7 @@
     "numpy": "2.3.5",
     "pyyaml": "6.0.3"
   },
-  "git_commit": null,
+  "git_commit": "b716c0b4c31d006d368a6e17cbad711594fd551f",
   "summary": {
     "replicates": [
       {

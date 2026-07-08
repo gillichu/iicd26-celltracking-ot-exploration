@@ -1,4 +1,5 @@
 numpy>=2.0
 pyyaml>=6.0
-# pandas is only needed to run the validation snippet in the README, not to generate data.
 pandas>=2.0
+scipy>=1.10      # cKDTree / linear_sum_assignment for baselines
+matplotlib>=3.7  # figures and the replicate GIF (GIF writing uses Pillow)

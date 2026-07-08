@@ -58,13 +58,18 @@ def write_snapshot(rep_dir, k, obs_ids_cells, positions, s):
             f_key.write(f"{obs_id},{cid}\n")
 
 
-def write_lineage(rep_dir, cells):
+def write_lineage(rep_dir, cells, div_pos):
     with open(rep_dir / "lineage.csv", "w") as f:
-        f.write("cell_id,parent_id,founder_id,birth_time,div_time\n")
+        f.write("cell_id,parent_id,founder_id,birth_time,div_time,div_x,div_y\n")
         for cid in sorted(cells):
             c = cells[cid]
-            div = "" if c.div_time is None else f"{c.div_time:.6f}"
-            f.write(f"{cid},{c.parent_id},{c.founder_id},{c.birth_time:.6f},{div}\n")
+            if c.div_time is None:
+                div, dx, dy = "", "", ""
+            else:
+                x, y = div_pos[cid]
+                div, dx, dy = f"{c.div_time:.6f}", f"{x:.6f}", f"{y:.6f}"
+            f.write(f"{cid},{c.parent_id},{c.founder_id},"
+                    f"{c.birth_time:.6f},{div},{dx},{dy}\n")
 
 
 def write_relation(rel_dir, i, j, cells, obs_i, obs_j):
@@ -91,6 +96,7 @@ def main():
     params = yaml.safe_load(PARAMS_PATH.read_text())
     n_reps = params["n_replicates"]
     T = params["horizon_T"]
+    sim_dt = params["sim_grid_dt"]
     experiments = params["experiments"]
 
     # Union of all snapshot times across experiments -> the master query grid.
@@ -104,14 +110,15 @@ def main():
     summary = {"replicates": []}
     for rep in range(n_reps):
         rng = np.random.default_rng(rep_seeds[rep])
-        cells, positions = simulate_master(
+        cells, positions, div_pos, _ = simulate_master(
             rng,
             n_founders=params["n_founders"],
             lam=params["lambda_div"],
             sigma=params["sigma"],
             box=params["founder_box"],
             T=T,
-            query_times=union_times,
+            snapshot_times=union_times,
+            sim_dt=sim_dt,
         )
 
         rep_summary = {"replicate": rep, "n_cells_total": len(cells), "experiments": {}}
@@ -124,7 +131,7 @@ def main():
 
             for k, s in enumerate(times):
                 write_snapshot(rep_dir, k, obs_by_time[s], positions, s)
-            write_lineage(rep_dir, cells)
+            write_lineage(rep_dir, cells, div_pos)
 
             rel_dir = rep_dir / "relations"
             for i, j in itertools.combinations(range(len(times)), 2):

@@ -16,6 +16,10 @@ founder_box: 20.0       # founders placed uniformly in [0, founder_box]^2 at t=0
 # Time horizon of the master process
 horizon_T: 2.0
 
+# Brownian paths are sampled on a fine grid of this step; snapshots are exact
+# subsamples of the resulting trajectory. All snapshot times must fall on it.
+sim_grid_dt: 0.01
+
 # Observation model
 obs_noise_sigma: 0.0    # measurement noise on (x, y); 0.0 => observed == true positions (v1)
 

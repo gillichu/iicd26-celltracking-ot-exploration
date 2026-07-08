@@ -14,10 +14,16 @@ method should recover.
 - Start with `N = 100` founder cells at `t = 0`, placed uniformly in a `[0, 20]²` box.
 - Each living cell divides after an `Exp(λ)` waiting time (`λ = ln 2`, one doubling
   per unit time); division is binary (parent retires, two fresh cells appear); no death.
-- Each cell diffuses as Brownian motion, `dx, dy ~ N(0, σ² dt)` with `σ = 0.5`.
-  Daughters start at the parent's position at the division instant.
+- Each cell diffuses as Brownian motion, `dx, dy ~ N(0, σ² dt)` with `σ = 0.5`,
+  sampled on a fine grid (`sim_grid_dt = 0.01`). Daughters start at the parent's
+  exact position at the division instant.
 - Horizon `T = 2`, giving ~4× growth (≈390 cells by `t = 2`).
 - 10 replicates, each a fresh master process with a reproducible spawned seed.
+
+The snapshots are **exact subsamples of each cell's true Brownian trajectory** — no
+interpolation. The full trajectory is not stored (it is deterministically
+regenerable from the seed via `simulate_master(..., return_trajectory=True)`), but
+every division's spatial position is recorded in `lineage.csv`.
 
 All parameters live in [`params.yaml`](params.yaml).
 
@@ -37,7 +43,7 @@ only in snapshot density — so they are directly comparable.
 data/<exp>/rep<NN>/
   snapshots/t<k>.csv     # obs_id, x, y      — the observation a tracker sees
   key/t<k>.csv           # obs_id, true_cell_id   — hidden lineage key (for evaluation/debug)
-  lineage.csv            # cell_id, parent_id, founder_id, birth_time, div_time
+  lineage.csv            # cell_id, parent_id, founder_id, birth_time, div_time, div_x, div_y
   relations/<i>-<j>.npy  # binary (n_j, n_i) ancestry matrix, all forward pairs i<j
   relations/<i>-<j>.csv  # descendant_obs_id, ancestor_obs_id   (same info, edge list)
 data/manifest.json       # seeds, library versions, git commit, per-replicate counts
