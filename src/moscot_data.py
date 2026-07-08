@@ -33,24 +33,17 @@ hvg_genes = adata_hvg.var_names[
 
 print(f"Selected {len(hvg_genes)} HVGs")
 
-# normalize/log transform if needed
-sc.pp.normalize_total(adata_hvg)
-sc.pp.log1p(adata_hvg)
+# Use the already processed expression in adata.X
+adata_pca = adata[:, hvg_genes].copy()
 
-# PCA embedding
-N_PCS = 30
+# Compute PCA directly
+sc.pp.pca(adata_pca, n_comps=30)
 
-sc.pp.pca(
-    adata_hvg,
-    n_comps=N_PCS
-)
-
-# cells × PCs
-X = adata_hvg.obsm["X_pca"]
+X = adata_pca.obsm["X_pca"]
 
 print(X.shape)
 
-pc_columns = [f"PC{i+1}" for i in range(N_PCS)]
+pc_columns = [f"PC{i+1}" for i in range(30)]
 
 # per-PC std across all MOSTA cells, used to scale drift noise below
 pc_std = X.std(axis=0)
