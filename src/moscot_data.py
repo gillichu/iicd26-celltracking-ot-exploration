@@ -5,7 +5,7 @@ import scipy.sparse as sp
 import os
 
 
-DATA_DIR = "/Users/anqiwu/Desktop/iicd26-celltracking-ot-exploration/data/exp1"
+DATA_DIR = "/Users/anqiwu/Desktop/iicd26-celltracking-ot-exploration/data/exp2"
 
 N_REPS = 10
 PERTURBATION_FRAC = 0.05   # drift noise per division, as a fraction of each PC's std
