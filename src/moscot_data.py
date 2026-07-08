@@ -5,10 +5,11 @@ import scipy.sparse as sp
 import os
 
 
-DATA_DIR = "/Users/anqiwu/Desktop/iicd26-celltracking-ot-exploration/data/exp2"
+BASE_DIR = "/Users/anqiwu/Desktop/iicd26-celltracking-ot-exploration/data"
+EXPERIMENTS = ["exp1", "exp2"]
 
 N_REPS = 10
-PERTURBATION_FRAC = 0.05   # drift noise per division, as a fraction of each PC's std
+PERTURBATION_FRAC = 1.5   # drift noise per division, as a fraction of each PC's std
 
 # Load MOSTA data
 adata = sc.read_h5ad("/Users/anqiwu/Downloads/E9.5_E1S1.MOSTA.h5ad")
@@ -58,105 +59,106 @@ dir = "/Users/anqiwu/Desktop/iicd26-celltracking-ot-exploration/"
 # output folder
 os.makedirs(dir + "data/exp1_with_expr", exist_ok=True)
 
-# process each replicate
+# process each replicate, for each experiment
 
-for rep in range(N_REPS):
+for exp in EXPERIMENTS:
+    for rep in range(N_REPS):
 
-    print(f"Processing rep{rep:02d}")
+        print(f"Processing {exp}/rep{rep:02d}")
 
-    rep_dir = f"{DATA_DIR}/rep{rep:02d}"
+        rep_dir = f"{BASE_DIR}/{exp}/rep{rep:02d}"
 
-    lineage_path = f"{rep_dir}/lineage.csv"
+        lineage_path = f"{rep_dir}/lineage.csv"
 
-    lineage = pd.read_csv(lineage_path)
-
-
-    # assign founder expression from MOSTA data
-
-    founders = lineage[
-        lineage["parent_id"] == -1
-    ]["cell_id"].values
+        lineage = pd.read_csv(lineage_path)
 
 
-    n_founders = len(founders)
+        # assign founder expression from MOSTA data
 
-    # sample MOSTA cells
-    sampled = np.random.choice(
-        adata.n_obs,
-        size=n_founders,
-        replace=False
-    )
+        founders = lineage[
+            lineage["parent_id"] == -1
+        ]["cell_id"].values
 
 
-    expression = {}
+        n_founders = len(founders)
 
-
-    for cell_id, idx in zip(founders, sampled):
-
-        expression[cell_id] = X[idx].copy()
-
-
-
-    # propagte expression to descendants
-
-    # process cells by birth order
-    lineage_sorted = lineage.sort_values(
-        "birth_time"
-    )
-
-
-    for _, row in lineage_sorted.iterrows():
-
-        cell_id = row["cell_id"]
-        parent = row["parent_id"]
-
-
-        # already assigned founder
-        if parent == -1:
-            continue
-
-
-        parent_expr = expression[parent]
-
-
-        # add stochastic drift, scaled per-PC by that PC's std across MOSTA
-        noise = np.random.normal(
-            loc=0,
-            scale=PERTURBATION_FRAC * pc_std,
-            size=parent_expr.shape
+        # sample MOSTA cells
+        sampled = np.random.choice(
+            adata.n_obs,
+            size=n_founders,
+            replace=False
         )
 
 
-        child_expr = parent_expr + noise
+        expression = {}
 
 
-        expression[cell_id] = child_expr
+        for cell_id, idx in zip(founders, sampled):
+
+            expression[cell_id] = X[idx].copy()
 
 
 
-    # save PC embedding matrix
+        # propagte expression to descendants
 
-    expr_matrix = np.vstack(
-        [
-            expression[cell_id]
-            for cell_id in lineage["cell_id"]
-        ]
-    )
+        # process cells by birth order
+        lineage_sorted = lineage.sort_values(
+            "birth_time"
+        )
 
 
-    expr_df = pd.DataFrame(
-        expr_matrix,
-        columns=pc_columns
-    )
+        for _, row in lineage_sorted.iterrows():
 
-    expr_df.insert(
-        0,
-        "cell_id",
-        lineage["cell_id"]
-    )
+            cell_id = row["cell_id"]
+            parent = row["parent_id"]
 
 
-    expr_df.to_csv(
-        f"{rep_dir}/pca_embedding.csv",
-        index=False
-    )
+            # already assigned founder
+            if parent == -1:
+                continue
+
+
+            parent_expr = expression[parent]
+
+
+            # add stochastic drift, scaled per-PC by that PC's std across MOSTA
+            noise = np.random.normal(
+                loc=0,
+                scale=PERTURBATION_FRAC * pc_std,
+                size=parent_expr.shape
+            )
+
+
+            child_expr = parent_expr + noise
+
+
+            expression[cell_id] = child_expr
+
+
+
+        # save PC embedding matrix
+
+        expr_matrix = np.vstack(
+            [
+                expression[cell_id]
+                for cell_id in lineage["cell_id"]
+            ]
+        )
+
+
+        expr_df = pd.DataFrame(
+            expr_matrix,
+            columns=pc_columns
+        )
+
+        expr_df.insert(
+            0,
+            "cell_id",
+            lineage["cell_id"]
+        )
+
+
+        expr_df.to_csv(
+            f"{rep_dir}/pca_embedding.csv",
+            index=False
+        )

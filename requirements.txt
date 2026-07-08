@@ -7,3 +7,4 @@ scanpy>=1.11     # h5ad I/O and preprocessing for MOSTA gene expression
 anndata>=0.12    # AnnData object used by scanpy/moscot
 moscot>=0.5      # moscot.datasets.mosta loader
 scikit-misc>=0.5 # loess, required by scanpy's seurat_v3 HVG flavor
+pot>=0.9         # unbalanced/partial OT couplings (ot_experiment.py, ot_expression_experiment.py)
