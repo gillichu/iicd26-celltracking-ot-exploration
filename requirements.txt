@@ -3,3 +3,7 @@ pyyaml>=6.0
 pandas>=2.0
 scipy>=1.10      # cKDTree / linear_sum_assignment for baselines
 matplotlib>=3.7  # figures and the replicate GIF (GIF writing uses Pillow)
+scanpy>=1.11     # h5ad I/O and preprocessing for MOSTA gene expression
+anndata>=0.12    # AnnData object used by scanpy/moscot
+moscot>=0.5      # moscot.datasets.mosta loader
+scikit-misc>=0.5 # loess, required by scanpy's seurat_v3 HVG flavor
