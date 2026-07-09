@@ -1,8 +1,7 @@
 """Fig1 expr: NN baselines (top-1, top-3) plus the four expression-only OT
 methods (top-1), per consecutive transition, two rows (exp1, exp2), over the 10
 replicates. Mirrors plot_fig1_v2.py, but sources results/ot_expr_accuracy.csv
-(cost = MOSTA PCA expression distance) instead of results/ot_accuracy.csv
-(cost = spatial position).
+(cost = MOSTA PCA expression distance).
 
 Also plots mean transport cost per method x transition from
 results/ot_expr_summary.csv, a column that isn't visualized anywhere else.
@@ -30,6 +29,7 @@ METHOD_ORDER = [
     ("mm-kl", "#E69F00"),
     ("mm-l2", "#009E73"),
     ("partial", "#D55E00"),
+    ("covered-lp", "#CC79A7"),
 ]
 
 plt.rcParams.update({
@@ -94,7 +94,7 @@ def plot_accuracy():
         ax.set_ylabel("ancestor-recovery accuracy")
         ax.set_title(title, loc="left")
         ax.margins(x=0.03)
-    axes[0].legend(ncol=6, frameon=False, loc="lower center",
+    axes[0].legend(ncol=len(METHOD_ORDER), frameon=False, loc="lower center",
                    bbox_to_anchor=(0.5, 1.06), columnspacing=1.2, handletextpad=0.3)
     axes[1].set_xlabel("snapshot transition")
     fig.suptitle("Ancestry recovery: NN baselines vs. expression-only OT methods (top-1)",
@@ -107,8 +107,17 @@ def plot_accuracy():
 
 
 def plot_cost():
-    """Mean transport cost per method x transition, from ot_expr_summary.csv."""
+    """Mean transport cost per unit mass, per method x transition.
+
+    transport_cost = sum(P * M) and mass = sum(P) are on different absolute
+    scales across methods: the POT couplings (entropic-kl, mm-kl, mm-l2,
+    partial) transport ~1 (or 0.7 for partial) unit of mass total, while
+    covered-lp's column-sum-to-1 constraint makes its total mass ~n_desc
+    (~10-100x larger). Dividing by mass gives a per-unit-mass cost that's
+    comparable across methods regardless of that normalisation convention.
+    """
     s = pd.read_csv(RESULTS / "ot_expr_summary.csv")
+    s = s.assign(cost_per_mass=s.transport_cost / s.mass)
     methods = [(m, c) for m, c in METHOD_ORDER if m in s.method.unique()]
     offs = np.linspace(-0.3, 0.3, len(methods))
     width = (offs[1] - offs[0]) * 0.8
@@ -121,7 +130,7 @@ def plot_cost():
         for xi, tr in enumerate(transitions):
             for off, (method, color) in zip(offs, methods):
                 vals = sub[(sub.transition == tr) & (sub.method == method)] \
-                    .sort_values("replicate").transport_cost.to_numpy()
+                    .sort_values("replicate").cost_per_mass.to_numpy()
                 if len(vals):
                     box(ax, xi + off, vals, color, width,
                         label=method if xi == 0 else None)
@@ -129,13 +138,13 @@ def plot_cost():
         ax.set_xticklabels(transitions)
         ax.grid(axis="y", color="#dddddd", lw=0.8)
         ax.set_axisbelow(True)
-        ax.set_ylabel("transport cost (normalised)")
+        ax.set_ylabel("transport cost per unit mass (normalised)")
         ax.set_title(title, loc="left")
         ax.margins(x=0.03)
-    axes[0].legend(ncol=4, frameon=False, loc="lower center",
+    axes[0].legend(ncol=len(methods), frameon=False, loc="lower center",
                    bbox_to_anchor=(0.5, 1.06), columnspacing=1.2, handletextpad=0.3)
     axes[1].set_xlabel("snapshot transition")
-    fig.suptitle("Expression-only OT: transport cost by method",
+    fig.suptitle("Expression-only OT: transport cost per unit mass by method",
                  x=0.02, ha="left", fontsize=13, fontweight="bold")
     fig.tight_layout(rect=(0, 0, 1, 0.96))
     out = RESULTS / "fig1_expr_cost.png"

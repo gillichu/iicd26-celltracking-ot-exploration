@@ -26,6 +26,8 @@ from pathlib import Path
 import numpy as np
 import pandas as pd
 import ot
+from scipy.optimize import linprog
+from scipy.sparse import eye, kron
 
 ROOT = Path(__file__).resolve().parent.parent
 DATA = ROOT / "data"
@@ -40,12 +42,61 @@ REG_M_KL = 0.05      # marginal relaxation, KL
 REG_M_L2 = 5.0       # marginal relaxation, L2
 MASS = 0.7           # transported mass for partial OT
 
-METHODS = ["entropic-kl", "mm-kl", "mm-l2", "partial"]
+METHODS = ["entropic-kl", "mm-kl", "mm-l2", "partial", "covered-lp"]
 SPARSE_TOL = 1e-6    # keep coupling entries above SPARSE_TOL * max in the CSV
 
 
 def fmt_t(t):
     return f"{t:g}"
+
+
+def covered_lp(M):
+    """
+    M: (n_anc, n_desc) cost matrix, e.g. normalized squared Euclidean
+       distance between ancestor and descendant PC embeddings.
+
+    Returns P: (n_anc, n_desc) optimal transport plan.
+
+    Constraints:
+      - sum_a P[a, d] == 1   for every d   (each descendant fully "covered"
+                                              by exactly one unit of mass,
+                                              split across ancestors)
+      - sum_d P[a, d] >= 1   for every a   (birth-only: every ancestor must
+                                              have at least one descendant,
+                                              no orphaned ancestors)
+      - 0 <= P[a, d] <= 1
+    """
+    n_anc, n_desc = M.shape
+    if n_desc < n_anc:
+        raise ValueError(
+            f"infeasible: {n_anc} ancestors each need >=1 descendant, "
+            f"but only {n_desc} descendants exist to cover exactly once"
+        )
+
+    c = M.ravel()  # flatten row-major: index(a, d) = a * n_desc + d
+
+    # sum_a P[a,d] == 1  -->  A_eq @ x == b_eq
+    A_eq = kron(np.ones((1, n_anc)), eye(n_desc))       # (n_desc, n_anc*n_desc)
+    b_eq = np.ones(n_desc)
+
+    # sum_d P[a,d] >= 1  -->  -sum_d P[a,d] <= -1
+    A_ub = -kron(eye(n_anc), np.ones((1, n_desc)))       # (n_anc, n_anc*n_desc)
+    b_ub = -np.ones(n_anc)
+
+    bounds = [(0, 1)] * (n_anc * n_desc)
+
+    res = linprog(
+        c,
+        A_ub=A_ub.tocsr(), b_ub=b_ub,
+        A_eq=A_eq.tocsr(), b_eq=b_eq,
+        bounds=bounds,
+        method="highs",
+    )
+
+    if not res.success:
+        raise RuntimeError(f"LP failed: {res.message}")
+
+    return res.x.reshape(n_anc, n_desc)
 
 
 def load_expr(exp, rep, k, pca):
@@ -75,6 +126,7 @@ def compute_couplings(es, et):
         "mm-kl": ot.unbalanced.mm_unbalanced(a, b, M, REG_M_KL, div="kl"),
         "mm-l2": ot.unbalanced.mm_unbalanced(a, b, M, REG_M_L2, div="l2"),
         "partial": ot.partial.partial_wasserstein(a, b, M, m=MASS),
+        "covered-lp": covered_lp(M),
     }
     return couplings, M
 
