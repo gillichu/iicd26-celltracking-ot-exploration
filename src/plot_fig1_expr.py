@@ -28,7 +28,6 @@ METHOD_ORDER = [
     ("entropic-kl", "#0072B2"),
     ("mm-kl", "#E69F00"),
     ("mm-l2", "#009E73"),
-    ("partial", "#D55E00"),
     ("covered-lp", "#CC79A7"),
 ]
 
