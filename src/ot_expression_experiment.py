@@ -38,8 +38,8 @@ EXP_TIMES = {"exp1": [0.0, 1.0, 2.0], "exp2": [0.0, 0.5, 1.0, 1.5, 2.0]}
 
 # Same OT hyperparameters as ot_experiment.py, kept identical for comparability.
 REG = 0.005          # entropic regularisation (on cost normalised to max 1)
-REG_M_KL = 0.05      # marginal relaxation, KL
-REG_M_L2 = 5.0       # marginal relaxation, L2
+REG_M_KL = [0.01, 0.5 ]  # marginal relaxation, KL: (a small / source loose, b large / target strict)
+REG_M_L2 = [1.0, 50.0 ]  # marginal relaxation, L2: (a small / source loose, b large / target strict)
 MASS = 0.7           # transported mass for partial OT
 
 METHODS = ["entropic-kl", "mm-kl", "mm-l2", "partial", "covered-lp"]
